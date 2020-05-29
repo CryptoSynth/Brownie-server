@@ -1,6 +1,8 @@
 const express = require('express');
 const Joi = require('@hapi/joi');
-const db = require('../db.json');
+const db = require('../db');
+
+const uuid = require('uuid');
 
 const router = express.Router();
 
@@ -15,9 +17,7 @@ router.get('/', (req, res) => {
 
 //GET '/:id'
 router.get('/:id', (req, res) => {
-  const product = db.products.find(
-    (product) => product.id === parseInt(req.params.id)
-  );
+  const product = db.products.find((product) => product.id === req.params.id);
   if (!product) return res.status(404).send('product not found!');
 
   res.send(product);
@@ -29,10 +29,11 @@ router.post('/', (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   const product = {
-    id: db.products.length + 1,
+    id: uuid.v4(),
+    image: req.body.image,
     name: req.body.name,
     description: req.body.description,
-    price: req.body.price
+    price: parseInt(req.body.price)
   };
 
   db.products.push(product);
@@ -41,26 +42,22 @@ router.post('/', (req, res) => {
 
 //PUT '/:id'
 router.put('/:id', (req, res) => {
-  const product = db.products.find(
-    (product) => product.id === parseInt(req.params.id)
-  );
+  const product = db.products.find((product) => product.id === req.params.id);
   if (!product) return res.status(404).send('product not found!');
 
-  const { error } = validateSchema(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  product.name = req.body.name;
-  product.description = req.body.description;
-  product.price = req.body.price;
+  product.image = req.body.image ? req.body.image : product.image;
+  product.name = req.body.name ? req.body.name : product.name;
+  product.description = req.body.description
+    ? req.body.description
+    : product.description;
+  product.price = parseInt(req.body.price ? req.body.price : product.price);
 
   res.send(product);
 });
 
 //DELETE '/:id
 router.delete('/:id', (req, res) => {
-  const product = db.products.find(
-    (product) => product.id === parseInt(req.params.id)
-  );
+  const product = db.products.find((product) => product.id === req.params.id);
   if (!product) return res.status(400).send('product not found!');
 
   const index = db.products.indexOf(product);
@@ -71,6 +68,7 @@ router.delete('/:id', (req, res) => {
 
 function validateSchema(body) {
   const schema = Joi.object({
+    image: Joi.string().required(),
     name: Joi.string().required().min(3).max(255),
     description: Joi.string().required().min(3).max(255),
     price: Joi.number().required().min(3).max(255)
