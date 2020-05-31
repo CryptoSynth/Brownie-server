@@ -1,15 +1,35 @@
 //INIT LIBS
 const express = require('express');
 const cors = require('cors');
-// const config = require('config');
+const config = require('config');
 const debug = require('debug')('app:database');
 
 //INIT ROUTES
-const database = require('./routes/database');
+const auth = require('./routes/auth');
+const users = require('./routes/users');
+const products = require('./routes/products');
 const home = require('./routes/home');
 
 //INIT EXPRESS
 const app = express();
+
+//VALIDATE secretkey
+const getSecretKey = config.get('secretKey');
+
+if (!getSecretKey) {
+  debug('FATAL ERROR: secretKey is not defined!');
+  process.exit(1);
+}
+
+//INIT DB
+process.env.NODE_ENV === 'development'
+  ? debug('Connected to DEV database')
+  : debug('Connected to PROD database');
+
+//SET CONFIGURATION
+if (app.get('env') === 'development') {
+  debug('We are currently in development!');
+}
 
 //INIT TEMPLATE ENGINE
 app.set('view engine', 'pug');
@@ -19,21 +39,17 @@ app.set('views', './views');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use(cors());
-
-//SET CONFIGURATION
-if (app.get('env') === 'development') {
-  debug('We are currently in development!');
-}
+app.use(
+  cors({
+    exposedHeaders: 'x-auth-token'
+  })
+);
 
 //SET ROUTES
-app.use('/api/products', database);
+app.use('/api/auth', auth);
+app.use('/api/users', users);
+app.use('/api/products', products);
 app.use('/', home);
-
-//INIT DB
-debug('Connected to database');
-
-//CREATE ROUTES
 
 //CREATE MIDDLEWARE ERROR HANDLER
 

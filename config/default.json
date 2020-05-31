@@ -1,3 +1,4 @@
 {
-  "name": "My Application Name"
+  "name": "My Application Name",
+  "secretKey": ""
 }
