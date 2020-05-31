@@ -1,13 +1,12 @@
 const express = require('express');
 const Joi = require('@hapi/joi');
-const db = require('../db');
-
+const { db } = require('../db');
 const uuid = require('uuid');
 
 const router = express.Router();
 
 /*===========================================================================
-DATABASE ROUTES
+products ROUTES
 =============================================================================*/
 
 //GET '/'
