@@ -55,7 +55,7 @@ const db = {
         password: '$2b$10$L8hgSohtauYT68gtz8v40e.mKw4TzV7VcjT/0y4p6q9FB9Nv7h0Xy'
       },
       orders: [],
-      isAdmin: true
+      isAdmin: false
     }
   ]
 };

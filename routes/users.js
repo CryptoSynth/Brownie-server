@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
       password: secret
     },
     orders: [],
-    isAdmin: true
+    isAdmin: false
   };
 
   db.users.push(user);
