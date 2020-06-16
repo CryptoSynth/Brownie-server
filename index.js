@@ -8,6 +8,7 @@ const debug = require('debug')('app:database');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
 const products = require('./routes/products');
+const checkouts = require('./routes/checkouts');
 const home = require('./routes/home');
 
 //INIT EXPRESS
@@ -41,7 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(
   cors({
-    exposedHeaders: 'x-auth-token'
+    exposedHeaders: 'x-auth-token' // only development?
   })
 );
 
@@ -49,6 +50,7 @@ app.use(
 app.use('/api/auth', auth);
 app.use('/api/users', users);
 app.use('/api/products', products);
+app.use('/api/checkouts', checkouts);
 app.use('/', home);
 
 //CREATE MIDDLEWARE ERROR HANDLER

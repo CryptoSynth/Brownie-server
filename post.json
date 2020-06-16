@@ -1,0 +1,23 @@
+{
+  "id": "0bb0deb0",
+  "lineItems": [
+    {
+      "id": "0bb0deb0",
+      "image": "box-brownies.jpeg",
+      "name": "Product 3",
+      "description": "Some type of description here",
+      "price": 30,
+      "quantity": 20
+    },
+    {
+      "id": "0bb0deb0",
+      "image": "box-brownies.jpeg",
+      "name": "Product 2",
+      "description": "Some type of description here",
+      "price": 20,
+      "quantity": 10
+    }
+  ],
+  "dataDescriptor": "COMMON.ACCEPT.INAPP.PAYMENT",
+  "dataValue": "eyJjb2RlIjoiNTBfMl8wNjAwMDUzQUYyNzZCREIxNzFCRjI2MkQ1QkNGMzU5Q0U2NjU2MDdFODdFNkY2MkFCNUFCOTdCMUZFNjZGNzBDN0RBODAxNzQ0NEExRURDNkFFODMxNDE5MUI5MUUyQ0E0RDY5NjI0IiwidG9rZW4iOiI5NTkxOTMxOTMwMjcwMzIzNzAzNjAxIiwidiI6IjEuMSJ9"
+}

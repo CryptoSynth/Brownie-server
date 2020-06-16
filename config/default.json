@@ -1,4 +1,6 @@
 {
   "name": "My Application Name",
-  "secretKey": ""
+  "secretKey": "",
+  "authLoginKey": "",
+  "authTransactionKey": ""
 }
