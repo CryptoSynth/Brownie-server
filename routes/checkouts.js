@@ -20,35 +20,17 @@ router.post('/', async (req, res) => {
     user.order.items.push(item);
   });
 
-  const paymentResponse = await createAnAcceptPaymentTransaction(
-    user,
-    dataDescriptor,
-    dataValue
-  );
+  try {
+    const paymentResponse = await createAnAcceptPaymentTransaction(
+      user,
+      dataDescriptor,
+      dataValue
+    );
+    res.send(paymentResponse);
+  } catch (err) {
+    res.status(400).send(err);
+  }
 
-  // if (
-  //   paymentResponse.messages.resultCode !== 'Ok' ||
-  //   paymentResponse.transactionResponse.messages !== null
-  // ) {
-  //   const responseMessage = {
-  //     transactionResult: paymentResponse.messages.message[0].text
-  //   };
-
-  //   return res.status(400).send(responseMessage);
-  // }
-
-  // if (paymentResponse.transactionResponse.errors !== null) {
-  //   const responseMessage = {
-  //     transactionResult: paymentResponse.messages.message[0].text
-  //   };
-  //   return res.status(400).send(responseMessage);
-  // }
-
-  // const responseMessage = {
-  //   transactionResult: paymentResponse.messages.message[0].text
-  // };
-
-  res.send(paymentResponse);
   user.order.items.splice(0, user.order.items.length); // clear out orders array after payment transaction
 });
 

@@ -123,6 +123,78 @@ function createAnAcceptPaymentTransaction(user, dataDescriptor, dataValue) {
     ctrl.execute(() => {
       let apiResponse = ctrl.getResponse();
       let response = new APIContracts.CreateTransactionResponse(apiResponse);
+
+      if (response != null) {
+        if (
+          response.getMessages().getResultCode() ==
+          APIContracts.MessageTypeEnum.OK
+        ) {
+          if (response.getTransactionResponse().getMessages() != null) {
+            const successfulData = {
+              transId: response.getTransactionResponse().getTransId(),
+              transResCode: response.getTransactionResponse().getResponseCode(),
+              transMesCode: response
+                .getTransactionResponse()
+                .getMessages()
+                .getMessage()[0]
+                .getCode(),
+              transDes: response
+                .getTransactionResponse()
+                .getMessages()
+                .getMessage()[0]
+                .getDescription()
+            };
+
+            resolve(successfulData);
+          }
+        } else {
+          if (response.getTransactionResponse().getErrors() != null) {
+            const errorData = {
+              transErrCode: response
+                .getTransactionResponse()
+                .getErrors()
+                .getError()[0]
+                .getErrorCode(),
+              transErrText: response
+                .getTransactionResponse()
+                .getErrors()
+                .getError()[0]
+                .getErrorText()
+            };
+
+            reject(errorData);
+          } else {
+            if (
+              response.getTransactionResponse() != null &&
+              response.getTransactionResponse().getErrors() != null
+            ) {
+              const errorData = {
+                transErrCode: response
+                  .getTransactionResponse()
+                  .getErrors()
+                  .getError()[0]
+                  .getErrorCode(),
+                transErrText: response
+                  .getTransactionResponse()
+                  .getErrors()
+                  .getError()[0]
+                  .getErrorText()
+              };
+
+              reject(errorData);
+            } else {
+              const errorData = {
+                msgCode: response.getMessages().getMessage()[0].getCode(),
+                msgText: response.getMessages().getMessage()[0].getText()
+              };
+
+              reject(errorData);
+            }
+          }
+        }
+      } else {
+        reject(new Error('Response is null'));
+      }
       resolve(response);
     });
   });
