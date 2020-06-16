@@ -9,13 +9,8 @@ const router = express.Router();
 users ROUTES
 =============================================================================*/
 
-//GET '/'
-router.get('/', (req, res) => {
-  res.send(db.users);
-});
-
 //GET '/:id'
-router.get('/:id', (req, res) => {
+router.get('/me', async (req, res) => {
   const user = db.users.find((user) => user.id === req.params.id);
   if (!user) return res.status(400).send('User not found!');
 
