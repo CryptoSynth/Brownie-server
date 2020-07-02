@@ -9,6 +9,7 @@ const auth = require('./routes/auth');
 const users = require('./routes/users');
 const products = require('./routes/products');
 const checkouts = require('./routes/checkouts');
+const orders = require('./routes/orders');
 const home = require('./routes/home');
 
 //INIT EXPRESS
@@ -51,6 +52,7 @@ app.use('/api/auth', auth);
 app.use('/api/users', users);
 app.use('/api/products', products);
 app.use('/api/checkouts', checkouts);
+app.use('/api/orders', orders);
 app.use('/', home);
 
 //CREATE MIDDLEWARE ERROR HANDLER

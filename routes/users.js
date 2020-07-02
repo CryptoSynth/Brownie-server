@@ -8,9 +8,13 @@ const router = express.Router();
 /*===========================================================================
 users ROUTES
 =============================================================================*/
+//GET '/'
+router.get('/', async (req, res) => {
+  res.send(db.users);
+});
 
 //GET '/:id'
-router.get('/me', async (req, res) => {
+router.get('/:id', async (req, res) => {
   const user = db.users.find((user) => user.id === req.params.id);
   if (!user) return res.status(400).send('User not found!');
 
@@ -19,6 +23,14 @@ router.get('/me', async (req, res) => {
 
 //POST '/'
 router.post('/', async (req, res) => {
+  if (!req.body.account.password) {
+    req.body.account = {
+      ...req.body.account,
+      password: uuid.v4().substring(0, 8)
+    };
+    console.log(req.body.account);
+  }
+
   const { error } = validateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -36,26 +48,27 @@ router.post('/', async (req, res) => {
     account: {
       firstName: req.body.account.firstName,
       lastName: req.body.account.lastName,
-      address: '',
-      city: '',
-      state: '',
-      zipCode: '',
       email: req.body.account.email,
-      password: secret
+      password: secret,
+      shipping: req.body.account.shipping || {},
+      billing: req.body.account.billing || {}
     },
+    items: [],
     orders: [],
-    isAdmin: false
+    isAdmin: false,
+    isSubscribed: req.body.isSubscribed || false
   };
 
   db.users.push(user);
 
-  const { id, isAdmin } = user;
+  const { id, isAdmin, account } = user;
 
   const token = generateAuthToken(user.id);
 
   res.header('x-auth-token', `JWT ${token}`).send({
     id,
-    isAdmin
+    isAdmin,
+    email: account.email
   });
 });
 
@@ -64,15 +77,13 @@ function validateUser(body) {
     account: {
       firstName: Joi.string().allow('').max(255),
       lastName: Joi.string().allow('').max(255),
-      address: Joi.string().allow('').max(255),
-      city: Joi.string().allow('').max(255),
-      state: Joi.string().allow('').max(255),
-      zipCode: Joi.string().allow('').max(255),
       email: Joi.string().email().required().min(3).max(255),
-      password: Joi.string().required().min(3).max(255)
+      password: Joi.string().required().min(3).max(255),
+      shipping: Joi.object(),
+      billing: Joi.object()
     },
-    orders: Joi.array(),
-    isAdmin: Joi.boolean()
+    isAdmin: Joi.boolean(),
+    isSubscribed: Joi.boolean()
   });
 
   return schema.validate(body);

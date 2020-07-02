@@ -1,5 +1,6 @@
 const express = require('express');
 const { db } = require('../db');
+const uuid = require('uuid');
 
 const {
   createAnAcceptPaymentTransaction
@@ -10,28 +11,60 @@ const router = express.Router();
 //POST
 router.post('/', async (req, res) => {
   //deconstruct user properties
-  const { id, lineItems, dataDescriptor, dataValue } = req.body;
+  const { account, items, dataDescriptor, dataValue } = req.body;
 
-  const user = db.users.find((user) => user.id === id);
+  const validLineItems = [];
 
-  if (!user) return res.status(400).send('User not found! Payment FAILED.');
+  items.forEach((item, index) => {
+    const dbItemId = [];
 
-  lineItems.forEach((item) => {
-    user.order.items.push(item);
+    //get db item ids from array of products
+    db.products.forEach((dbItem) => {
+      dbItemId.push(dbItem.id);
+    });
+
+    //find the index of the db item
+    const dbIndex = dbItemId.indexOf(item.id);
+
+    //validate the user item with the db item and push db item to transaction
+    if (item.id === db.products[dbIndex].id) {
+      const userItem = {
+        ...db.products[index],
+        quantity: item.quantity
+      };
+
+      validLineItems.push(userItem);
+    }
   });
+
+  const invoiceId = uuid.v4().substring(0, 8);
+  const orderDescription = `${account.firstName} ${account.lastName} has ordered ${items.length} products`;
 
   try {
     const paymentResponse = await createAnAcceptPaymentTransaction(
-      user,
+      invoiceId,
+      orderDescription,
+      account,
+      validLineItems,
       dataDescriptor,
       dataValue
     );
-    res.send(paymentResponse);
+
+    //send Authrize.net payment Response
+    res.send({ ...paymentResponse, orderId: invoiceId });
+
+    //create user order
+    const order = {
+      invoiceId,
+      orderDescription,
+      account,
+      items: validLineItems
+    };
+
+    db.orders.push(order);
   } catch (err) {
     res.status(400).send(err);
   }
-
-  user.order.items.splice(0, user.order.items.length); // clear out orders array after payment transaction
 });
 
 module.exports = router;
