@@ -27,11 +27,14 @@ router.post('/', async (req, res) => {
   if (!validPassword) return res.status(400).send('Invalid email or password!');
   const token = generateAuthToken(user.id);
 
-  const { id, isAdmin } = user;
+  const { id, isAdmin, account } = user;
 
   res.header('x-auth-token', `JWT ${token}`).send({
     id,
-    isAdmin
+    isAdmin,
+    email: account.email,
+    firstName: account.firstName,
+    lastName: account.lastName
   });
 });
 

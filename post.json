@@ -1,23 +1,53 @@
 {
-  "id": "0bb0deb0",
-  "lineItems": [
+  "account": {
+    "shipping": {
+      "firstName": "Leonardo",
+      "lastName": "Ramirez",
+      "addressOne": "706 Bliss Street pl.",
+      "addressTwo": "apt. 456",
+      "city": "park drive",
+      "state": "MI",
+      "zipCode": "45673",
+      "country": "USA"
+    },
+    "billing": {
+      "firstName": "Leonardo",
+      "lastName": "Ramirez",
+      "addressOne": "706 Bliss Street pl.",
+      "addressTwo": "apt. 456",
+      "city": "park drive",
+      "state": "MI",
+      "zipCode": "45673",
+      "country": "USA",
+      "phoneNum": "(616) 994-2523"
+    }
+  },
+  "items": [
     {
-      "id": "0bb0deb0",
+      "id": "61319c1c",
       "image": "box-brownies.jpeg",
-      "name": "Product 3",
+      "name": "Product 1",
       "description": "Some type of description here",
-      "price": 30,
-      "quantity": 20
+      "price": 12,
+      "quantity": 10
     },
     {
-      "id": "0bb0deb0",
+      "id": "1afa90ef",
       "image": "box-brownies.jpeg",
       "name": "Product 2",
       "description": "Some type of description here",
       "price": 20,
-      "quantity": 10
+      "quantity": 40
+    },
+    {
+      "id": "2ba4cf9e",
+      "image": "box-brownies.jpeg",
+      "name": "Product 3",
+      "description": "Some type of description here",
+      "price": 30,
+      "quantity": 30
     }
   ],
   "dataDescriptor": "COMMON.ACCEPT.INAPP.PAYMENT",
-  "dataValue": "eyJjb2RlIjoiNTBfMl8wNjAwMDUzQUYyNzZCREIxNzFCRjI2MkQ1QkNGMzU5Q0U2NjU2MDdFODdFNkY2MkFCNUFCOTdCMUZFNjZGNzBDN0RBODAxNzQ0NEExRURDNkFFODMxNDE5MUI5MUUyQ0E0RDY5NjI0IiwidG9rZW4iOiI5NTkxOTMxOTMwMjcwMzIzNzAzNjAxIiwidiI6IjEuMSJ9"
+  "dataValue": "eyJjb2RlIjoiNTBfMl8wNjAwMDUzQTczRkFFNjU2MUZDOTlBQzk3Q0M3QzlDQkEwMjlFNzkzQjA2NzhDNEM3MDk2NDVDMTI1MTE0MjdGMzI4RERGRkZBNEJDRDlEOEE1Mzg3RUNGOTExNkJFMjM0QjE0M0E5IiwidG9rZW4iOiI5NTkyMzIxMDkwMjM2NTI1ODA0NjAxIiwidiI6IjEuMSJ9"
 }

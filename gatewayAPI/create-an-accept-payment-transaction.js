@@ -3,7 +3,14 @@
 const { APIControllers, APIContracts } = require('authorizenet');
 const config = require('config');
 
-function createAnAcceptPaymentTransaction(user, dataDescriptor, dataValue) {
+function createAnAcceptPaymentTransaction(
+  invoiceId,
+  orderDescription,
+  account,
+  items,
+  dataDescriptor,
+  dataValue
+) {
   let merchAuthType = new APIContracts.MerchantAuthenticationType();
 
   //Use API Key and Secret Key for Authrize Login
@@ -20,46 +27,37 @@ function createAnAcceptPaymentTransaction(user, dataDescriptor, dataValue) {
 
   //set user order
   let orderDetails = new APIContracts.OrderType();
-  orderDetails.setInvoiceNumber(user.order.invoiceId); //tmp UUID, change for production to custom Invoice #
-  orderDetails.setDescription(user.order.description);
-
-  //set tax switch statment for letious states and taxes???
-  let tax = new APIContracts.ExtendedAmountType();
-  tax.setAmount(user.order.tax.amount);
-  tax.setName(user.order.tax.name);
-  tax.setDescription(user.order.tax.description);
-
-  //set shipping
-  let shipping = new APIContracts.ExtendedAmountType();
-  shipping.setAmount(user.order.shipping.amount);
-  shipping.setName(user.order.shipping.name);
-  shipping.setDescription(user.order.shipping.description);
-
-  //set bill to
-  let billTo = new APIContracts.CustomerAddressType();
-  billTo.setFirstName(user.account.firstName);
-  billTo.setLastName(user.account.lastName);
-  billTo.setAddress(user.account.address);
-  billTo.setCity(user.account.city);
-  billTo.setState(user.account.state);
-  billTo.setZip(user.account.zipCode);
-  billTo.setCountry('USA');
+  orderDetails.setInvoiceNumber(invoiceId); //tmp UUID, change for production to custom Invoice #
+  orderDetails.setDescription(orderDescription);
 
   //set ship to
   let shipTo = new APIContracts.CustomerAddressType();
-  shipTo.setFirstName(user.account.firstName);
-  shipTo.setLastName(user.account.lastName);
-  shipTo.setAddress(user.account.address);
-  shipTo.setCity(user.account.city);
-  shipTo.setState(user.account.state);
-  shipTo.setZip(user.account.zipCode);
-  shipTo.setCountry('USA');
+  shipTo.setFirstName(account.shipping.firstName);
+  shipTo.setLastName(account.shipping.lastName);
+  shipTo.setAddress(`${account.billing.addressOne} 
+  ${account.billing.addressTwo}`);
+  shipTo.setCity(account.shipping.city);
+  shipTo.setState(account.shipping.state);
+  shipTo.setZip(account.shipping.zipCode);
+  shipTo.setCountry(account.shipping.country);
+
+  //set bill to
+  let billTo = new APIContracts.CustomerAddressType();
+  billTo.setFirstName(account.billing.firstName);
+  billTo.setLastName(account.billing.lastName);
+  billTo.setAddress(`${account.billing.addressOne} 
+  ${account.billing.addressTwo}`);
+  billTo.setCity(account.billing.city);
+  billTo.setState(account.billing.state);
+  billTo.setZip(account.billing.zipCode);
+  billTo.setCountry(account.billing.country);
+  billTo.setPhoneNumber(account.billing.phoneNum);
 
   //set line items and push to lineItemArray
   let lineItemList = [];
-  let totalOrderPrice = 0;
+  let totalItemPrice = 0;
 
-  user.order.items.forEach((item) => {
+  items.forEach((item) => {
     let lineItem_id = new APIContracts.LineItemType();
 
     lineItem_id.setItemId(item.id);
@@ -70,20 +68,38 @@ function createAnAcceptPaymentTransaction(user, dataDescriptor, dataValue) {
 
     lineItemList.push(lineItem_id);
 
-    totalOrderPrice += item.price * item.quantity;
-    return totalOrderPrice;
+    totalItemPrice += item.price * item.quantity;
+    return totalItemPrice;
   });
 
   let lineItems = new APIContracts.ArrayOfLineItem();
   lineItems.setLineItem(lineItemList);
+
+  //set total item amount
+  let totalAmount = new APIContracts.ExtendedAmountType();
+  totalAmount.setAmount(totalItemPrice);
+  totalAmount.setName('Total Order Price');
+  totalAmount.setDescription('This is the total for each item quantity');
+
+  //set tax amount
+  let tax = new APIContracts.ExtendedAmountType();
+  tax.setAmount(totalItemPrice * 0.06);
+  tax.setName('Sales Tax');
+  tax.setDescription('Total Sales tax for items purchased');
+
+  //set shipping amount
+  let shipping = new APIContracts.ExtendedAmountType();
+  shipping.setAmount(0.0);
+  shipping.setName('Shipping Cost');
+  shipping.setDescription('Shipping Rate selected by user');
 
   let transactionSetting1 = new APIContracts.SettingType();
   transactionSetting1.setSettingName('duplicateWindow');
   transactionSetting1.setSettingValue('120');
 
   let transactionSetting2 = new APIContracts.SettingType();
-  transactionSetting2.setSettingName('recurringBilling');
-  transactionSetting2.setSettingValue('false');
+  transactionSetting2.setSettingName('emailCustomer');
+  transactionSetting2.setSettingValue(true);
 
   let transactionSettingList = [];
   transactionSettingList.push(transactionSetting1);
@@ -99,13 +115,13 @@ function createAnAcceptPaymentTransaction(user, dataDescriptor, dataValue) {
   );
 
   transactionRequestType.setPayment(paymentType);
-  transactionRequestType.setAmount(totalOrderPrice);
-  transactionRequestType.setLineItems(lineItems);
   transactionRequestType.setOrder(orderDetails);
-  transactionRequestType.setTax(tax);
-  transactionRequestType.setShipping(shipping);
   transactionRequestType.setBillTo(billTo);
   transactionRequestType.setShipTo(shipTo);
+  transactionRequestType.setLineItems(lineItems);
+  transactionRequestType.setAmount(
+    totalAmount.getAmount() + tax.getAmount() + shipping.getAmount()
+  );
   transactionRequestType.setTransactionSettings(transactionSettings);
 
   //create request
@@ -126,26 +142,16 @@ function createAnAcceptPaymentTransaction(user, dataDescriptor, dataValue) {
 
       if (response != null) {
         if (
-          response.getMessages().getResultCode() ==
+          response.getMessages().getResultCode() !=
           APIContracts.MessageTypeEnum.OK
         ) {
-          if (response.getTransactionResponse().getMessages() != null) {
-            const successfulData = {
-              transId: response.getTransactionResponse().getTransId(),
-              transResCode: response.getTransactionResponse().getResponseCode(),
-              transMesCode: response
-                .getTransactionResponse()
-                .getMessages()
-                .getMessage()[0]
-                .getCode(),
-              transDes: response
-                .getTransactionResponse()
-                .getMessages()
-                .getMessage()[0]
-                .getDescription()
+          if (response.getMessages() != null) {
+            const errorData = {
+              msgCode: response.getMessages().getMessage()[0].getCode(),
+              msgText: response.getMessages().getMessage()[0].getText()
             };
 
-            resolve(successfulData);
+            reject(errorData);
           }
         } else {
           if (response.getTransactionResponse().getErrors() != null) {
@@ -183,12 +189,24 @@ function createAnAcceptPaymentTransaction(user, dataDescriptor, dataValue) {
 
               reject(errorData);
             } else {
-              const errorData = {
-                msgCode: response.getMessages().getMessage()[0].getCode(),
-                msgText: response.getMessages().getMessage()[0].getText()
+              const successfulData = {
+                transId: response.getTransactionResponse().getTransId(),
+                transResCode: response
+                  .getTransactionResponse()
+                  .getResponseCode(),
+                transMesCode: response
+                  .getTransactionResponse()
+                  .getMessages()
+                  .getMessage()[0]
+                  .getCode(),
+                transDes: response
+                  .getTransactionResponse()
+                  .getMessages()
+                  .getMessage()[0]
+                  .getDescription()
               };
 
-              reject(errorData);
+              resolve(successfulData);
             }
           }
         }
