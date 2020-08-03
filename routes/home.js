@@ -7,11 +7,6 @@ HOME ROUTES
 =============================================================================*/
 
 //GET '/'
-router.get('/', (req, res) => {
-  res.render('index', {
-    title: 'Brownie Server',
-    message: 'Welcome to the brownie server API!'
-  });
-});
+router.get('/', (req, res) => {});
 
 module.exports = router;

@@ -1,6 +1,9 @@
 const express = require('express');
-const Joi = require('@hapi/joi');
-const { db, generateAuthToken } = require('../db');
+const {
+  User,
+  validateUser,
+  generateAuthToken
+} = require('../models/users.model');
 const bcrypt = require('bcrypt');
 
 const router = express.Router();
@@ -10,11 +13,11 @@ auth ROUTES
 
 //POST '/'
 router.post('/', async (req, res) => {
-  const { error } = validateAuth(req.body);
+  const { error } = validateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const user = db.users.find((user) => {
-    return user.account.email === req.body.account.email;
+  const user = await User.findOne({
+    'account.email': req.body.account.email
   });
 
   if (!user) return res.status(400).send('Invalid email or password!');
@@ -25,28 +28,26 @@ router.post('/', async (req, res) => {
   );
 
   if (!validPassword) return res.status(400).send('Invalid email or password!');
-  const token = generateAuthToken(user.id);
 
-  const { id, isAdmin, account } = user;
+  //filter user to send non-sensitive data
+  const user_filtered = filterUser(user);
 
-  res.header('x-auth-token', `JWT ${token}`).send({
-    id,
-    isAdmin,
-    email: account.email,
-    firstName: account.firstName,
-    lastName: account.lastName
-  });
+  const token = generateAuthToken(user);
+  res.header('x-auth-token', `JWT ${token}`).send(user_filtered);
 });
 
-function validateAuth(body) {
-  const schema = Joi.object({
+function filterUser(user) {
+  //filter out non account information
+  const current_user = {
     account: {
-      email: Joi.string().email().required().min(3).max(255),
-      password: Joi.string().required().min(3).max(255)
-    }
-  });
+      firstName: user.account.firstName,
+      lastName: user.account.lastName,
+      email: user.account.email
+    },
+    isSubscribed: user.isSubscribed
+  };
 
-  return schema.validate(body);
+  return current_user;
 }
 
 module.exports = router;

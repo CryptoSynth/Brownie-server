@@ -4,7 +4,7 @@ const { APIControllers, APIContracts } = require('authorizenet');
 const config = require('config');
 
 function createAnAcceptPaymentTransaction(
-  invoiceId,
+  orderInvoiceId,
   orderDescription,
   account,
   items,
@@ -27,15 +27,15 @@ function createAnAcceptPaymentTransaction(
 
   //set user order
   let orderDetails = new APIContracts.OrderType();
-  orderDetails.setInvoiceNumber(invoiceId); //tmp UUID, change for production to custom Invoice #
+  orderDetails.setInvoiceNumber(orderInvoiceId); //tmp UUID, change for production to custom Invoice #
   orderDetails.setDescription(orderDescription);
 
   //set ship to
   let shipTo = new APIContracts.CustomerAddressType();
   shipTo.setFirstName(account.shipping.firstName);
   shipTo.setLastName(account.shipping.lastName);
-  shipTo.setAddress(`${account.billing.addressOne} 
-  ${account.billing.addressTwo}`);
+  shipTo.setAddress(`${account.shipping.addressOne} 
+  ${account.shipping.addressTwo}`);
   shipTo.setCity(account.shipping.city);
   shipTo.setState(account.shipping.state);
   shipTo.setZip(account.shipping.zipCode);
@@ -58,15 +58,15 @@ function createAnAcceptPaymentTransaction(
   let totalItemPrice = 0;
 
   items.forEach((item) => {
-    let lineItem_id = new APIContracts.LineItemType();
+    let lineItem = new APIContracts.LineItemType();
 
-    lineItem_id.setItemId(item.id);
-    lineItem_id.setName(item.name);
-    lineItem_id.setDescription(item.description);
-    lineItem_id.setQuantity(item.quantity);
-    lineItem_id.setUnitPrice(item.price);
+    lineItem.setItemId(item._id);
+    lineItem.setName(item.name);
+    lineItem.setDescription(item.description);
+    lineItem.setQuantity(item.quantity);
+    lineItem.setUnitPrice(item.price);
 
-    lineItemList.push(lineItem_id);
+    lineItemList.push(lineItem);
 
     totalItemPrice += item.price * item.quantity;
     return totalItemPrice;
@@ -87,11 +87,11 @@ function createAnAcceptPaymentTransaction(
   tax.setName('Sales Tax');
   tax.setDescription('Total Sales tax for items purchased');
 
-  //set shipping amount
-  let shipping = new APIContracts.ExtendedAmountType();
-  shipping.setAmount(0.0);
-  shipping.setName('Shipping Cost');
-  shipping.setDescription('Shipping Rate selected by user');
+  // //set shipping amount
+  // let shipping = new APIContracts.ExtendedAmountType();
+  // shipping.setAmount(shippingCost);
+  // shipping.setName('Shipping Cost');
+  // shipping.setDescription('Shipping Rate selected by user');
 
   let transactionSetting1 = new APIContracts.SettingType();
   transactionSetting1.setSettingName('duplicateWindow');
@@ -119,9 +119,8 @@ function createAnAcceptPaymentTransaction(
   transactionRequestType.setBillTo(billTo);
   transactionRequestType.setShipTo(shipTo);
   transactionRequestType.setLineItems(lineItems);
-  transactionRequestType.setAmount(
-    totalAmount.getAmount() + tax.getAmount() + shipping.getAmount()
-  );
+  //doesnt include shipping cost
+  transactionRequestType.setAmount(totalAmount.getAmount() + tax.getAmount());
   transactionRequestType.setTransactionSettings(transactionSettings);
 
   //create request

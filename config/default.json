@@ -2,5 +2,6 @@
   "name": "My Application Name",
   "secretKey": "",
   "authLoginKey": "",
-  "authTransactionKey": ""
+  "authTransactionKey": "",
+  "shippingKey": ""
 }

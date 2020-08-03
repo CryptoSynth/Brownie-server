@@ -1,5 +1,7 @@
 {
   "name": "My Application Name - DEV",
   "authLoginKey": "469sAkuGW",
-  "authTransactionKey": "3Zw95nha2SsT34EF"
+  "authTransactionKey": "3Zw95nha2SsT34EF",
+  "shippingKey": "EZTKa257e5ea24bb4eeeb5cbece2e9b64099o0PJnFBKCcQDr6wDe1wh7g",
+  "db_url": "mongodb://localhost/brownie"
 }
