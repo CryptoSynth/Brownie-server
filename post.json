@@ -1,5 +1,8 @@
 {
   "account": {
+    "firstName": "Leonardo",
+    "lastName": "Ramirez",
+    "email": "test1@gmail.com",
     "shipping": {
       "firstName": "Leonardo",
       "lastName": "Ramirez",

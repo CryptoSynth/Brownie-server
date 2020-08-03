@@ -1,79 +1,69 @@
 const express = require('express');
-const Joi = require('@hapi/joi');
-const { db } = require('../db');
-const uuid = require('uuid');
-
+const { Product, validateProduct } = require('../models/product.model');
 const router = express.Router();
-
 /*===========================================================================
 products ROUTES
 =============================================================================*/
 
 //GET '/'
-router.get('/', (req, res) => {
-  res.send(db.products);
+router.get('/', async (req, res) => {
+  const product = await Product.find().sort({ name: 1 }).select({ __v: 0 });
+
+  res.send(product);
 });
 
 //GET '/:id'
-router.get('/:id', (req, res) => {
-  const product = db.products.find((product) => product.id === req.params.id);
+router.get('/:id', async (req, res) => {
+  const product = await Product.findById(req.params.id);
   if (!product) return res.status(404).send('product not found!');
 
   res.send(product);
 });
 
 //POST '/'
-router.post('/', (req, res) => {
-  const { error } = validateSchema(req.body);
+router.post('/', async (req, res) => {
+  const { error } = validateProduct(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const product = {
-    id: uuid.v4(),
+  let product = new Product({
     image: req.body.image,
     name: req.body.name,
     description: req.body.description,
     price: parseInt(req.body.price)
-  };
+  });
 
-  db.products.push(product);
+  product = await product.save();
   res.send(product);
 });
 
 //PUT '/:id'
-router.put('/:id', (req, res) => {
-  const product = db.products.find((product) => product.id === req.params.id);
-  if (!product) return res.status(404).send('product not found!');
+router.put('/:id', async (req, res) => {
+  const { error } = validateProduct(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
 
-  product.image = req.body.image ? req.body.image : product.image;
-  product.name = req.body.name ? req.body.name : product.name;
-  product.description = req.body.description
-    ? req.body.description
-    : product.description;
-  product.price = parseInt(req.body.price ? req.body.price : product.price);
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    {
+      image: req.body.image,
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price
+    },
+    { new: true }
+  );
+
+  if (!product) return res.status(404).send('Product ID not found!');
 
   res.send(product);
 });
 
 //DELETE '/:id
-router.delete('/:id', (req, res) => {
-  const product = db.products.find((product) => product.id === req.params.id);
-  if (!product) return res.status(400).send('product not found!');
+router.delete('/:id', async (req, res) => {
+  const product = await Product.findByIdAndDelete(req.params.id);
 
-  const index = db.products.indexOf(product);
-  db.products.splice(index, 1);
+  if (!product) return res.status(400).send('product not found!');
 
   res.send(product);
 });
-
-function validateSchema(body) {
-  const schema = Joi.object({
-    image: Joi.string().required(),
-    name: Joi.string().required().min(3).max(255),
-    description: Joi.string().required().min(3).max(255),
-    price: Joi.number().required().min(3).max(255)
-  });
-
-  return schema.validate(body);
-}
 
 module.exports = router;
