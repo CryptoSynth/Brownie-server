@@ -12,6 +12,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  tracking_url: {
+    type: String,
+    required: true
+  },
   description: {
     type: String,
     required: true,

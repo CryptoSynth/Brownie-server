@@ -15,10 +15,13 @@ users ROUTES
 =============================================================================*/
 
 //GET '/'
-router.get('/', async (req, res) => {
-  const users = await User.find().select({ __v: 0 });
+router.get('/', auth, async (req, res) => {
+  if (req.user.isAdmin) {
+    const users = await User.find({ isAdmin: false }).select({ __v: 0 });
+    return res.send(users);
+  }
 
-  res.send(users);
+  res.status(401).status('Unauthroized Request.');
 });
 
 //GET '/current_user'

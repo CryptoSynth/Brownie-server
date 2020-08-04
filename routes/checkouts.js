@@ -20,7 +20,11 @@ router.post('/', async (req, res) => {
   const orderInvoiceId = uuid.v4().substring(0, 8);
   const orderDescription = `${account.firstName} ${
     account.lastName
-  } has ordered ${items.length < 2 ? 1 : items.length} item`;
+  } has ordered ${
+    items.length < 2
+      ? items.length + ' ' + 'item'
+      : items.length + ' ' + 'items'
+  } `;
 
   // payment process
   try {
@@ -45,6 +49,7 @@ router.post('/', async (req, res) => {
     let order = new Order({
       invoiceId: orderInvoiceId,
       shipping_id: shipping_ordered.id,
+      tracking_url: shipping_ordered.tracker.public_url,
       description: orderDescription,
       items: lineItems
     });
@@ -52,7 +57,8 @@ router.post('/', async (req, res) => {
 
     //(5) send order to user's account
     const user = await User.findOne({ 'account.email': account.email }).select({
-      __v: 0
+      __v: 0,
+      shipping_id: 0
     });
     user.orders.push(order);
     user.save();
