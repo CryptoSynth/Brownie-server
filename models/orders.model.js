@@ -22,7 +22,12 @@ const orderSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 255
   },
-  items: [Object]
+  items: [Object],
+  isFullfilled: {
+    type: Boolean,
+    required: true,
+    default: false
+  }
 });
 
 const Order = mongoose.model('Order', orderSchema);

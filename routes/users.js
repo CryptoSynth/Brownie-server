@@ -17,7 +17,10 @@ users ROUTES
 //GET '/'
 router.get('/', auth, async (req, res) => {
   if (req.user.isAdmin) {
-    const users = await User.find({ isAdmin: false }).select({ __v: 0 });
+    const users = await User.find({ isAdmin: false }).select({
+      __v: 0,
+      isAdmin: 0
+    });
     return res.send(users);
   }
 
