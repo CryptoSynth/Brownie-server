@@ -1,10 +1,11 @@
 //INIT LIBS
+const express = require('express');
 const result = require('dotenv').config();
 const config = require('config');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const express = require('express');
 const debug = require('debug')('app:database');
+const hbs = require('express-handlebars');
 
 //INIT ROUTES
 const users = require('./routes/users');
@@ -16,12 +17,6 @@ const orders = require('./routes/orders');
 const shipping = require('./routes/shipping');
 const tracking = require('./routes/tracking');
 const home = require('./routes/home');
-
-//delete this test file
-const genres = require('./test/routes/genres');
-const customers = require('./test/routes/customers');
-const movies = require('./test/routes/movies');
-const rentals = require('./test/routes/rentals');
 
 //INIT EXPRESS
 const app = express();
@@ -55,8 +50,15 @@ if (app.get('env') === 'development') {
 }
 
 //INIT TEMPLATE ENGINE
-app.set('views', './views');
-app.set('view engine', 'pug');
+app.engine(
+  'hbs',
+  hbs({
+    extname: 'hbs',
+    defaultLayout: 'main',
+    layoutsDir: `${__dirname}/views/layouts`
+  })
+);
+app.set('view engine', 'hbs');
 
 //INIT MIDDLEWARE
 app.use(express.json());
@@ -78,12 +80,6 @@ app.use('/api/orders', orders);
 app.use('/api/shipping', shipping);
 app.use('/api/tracking', tracking);
 app.use('/', home);
-
-//delete this test file
-app.use('/api/genres', genres);
-app.use('/api/customers', customers);
-app.use('/api/movies', movies);
-app.use('/api/rentals', rentals);
 
 //CREATE MIDDLEWARE ERROR HANDLER
 

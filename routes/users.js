@@ -1,4 +1,5 @@
 const express = require('express');
+const config = require('config');
 const {
   User,
   validateUser,
@@ -7,8 +8,11 @@ const {
 const auth = require('../middleware/auth.middleware');
 const bcrypt = require('bcrypt');
 const uuid = require('uuid');
+const sgMail = require('@sendgrid/mail');
 
 const router = express.Router();
+
+sgMail.setApiKey(config.get('sendgridKey'));
 
 /*===========================================================================
 users ROUTES
@@ -24,7 +28,7 @@ router.get('/', auth, async (req, res) => {
     return res.send(users);
   }
 
-  res.status(401).status('Unauthroized Request.');
+  res.status(401).status('Unauthorized Request.');
 });
 
 //GET '/current_user'
