@@ -9,10 +9,9 @@ const auth = require('../middleware/auth.middleware');
 const bcrypt = require('bcrypt');
 const uuid = require('uuid');
 const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(config.get('sendgridKey'));
 
 const router = express.Router();
-
-sgMail.setApiKey(config.get('sendgridKey'));
 
 /*===========================================================================
 users ROUTES
@@ -83,6 +82,20 @@ router.post('/', async (req, res) => {
 
   const token = generateAuthToken(user);
   res.header('x-auth-token', `JWT ${token}`).send(user_filtered);
+
+  //send account created Email
+  const msg = {
+    to: user.account.email,
+    from: 'mackenzie.rowe@ethereal.email',
+    templateId: 'd-3860e9ecb6da4757b6b3e29c19d9c785',
+    dynamicTemplateData: {
+      subject: 'Testing Brownies',
+      first_name: user.account.firstName,
+      last_name: user.account.lastName
+    }
+  };
+
+  sgMail.send(msg);
 });
 
 //Update '/current_user'
