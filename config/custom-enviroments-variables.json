@@ -1,0 +1,8 @@
+{
+  "secretKey": "BROWNIE_SECRETKEY",
+  "db_url": "mongodb://localhost/brownie",
+  "authLoginKey": "AUTHORIZE_LOGIN_SECRETKEY",
+  "authTransactionKey": "AUTHORIZE_TRANS_SECRETKEY",
+  "shippingKey": "SHIPPING_SECRETKEY",
+  "sendGridKey": "EMAIL_SECRETKEY"
+}
