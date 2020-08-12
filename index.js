@@ -30,17 +30,10 @@ if (result.error) {
   throw result.error;
 }
 
-debug(result.parsed);
-
 if (!config.get('secretKey')) {
   debug('FATAL ERROR: secretKey is not defined!');
   process.exit(1);
 }
-
-//INIT DB
-process.env.NODE_ENV === 'development'
-  ? debug('Connected to DEV database')
-  : debug('Connected to PROD database');
 
 //SET CONFIGURATION
 if (app.get('env') === 'development') {
@@ -100,8 +93,8 @@ async function mongoConnection(url) {
       useUnifiedTopology: true,
       useFindAndModify: false
     });
-    console.log('Connected to MongoDB...');
+    console.log('Connected to DEV MongoDB...');
   } catch (err) {
-    console.log('Could not connect to MongoDB...', err);
+    console.log('Could not connect to DEV MongoDB...', err);
   }
 }
