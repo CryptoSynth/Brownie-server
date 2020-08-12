@@ -26,15 +26,13 @@ const url = config.get('db_url');
 mongoConnection(url);
 
 //VALIDATE secretkey
-const getSecretKey = config.get('secretKey');
-
 if (result.error) {
   throw result.error;
 }
 
 debug(result.parsed);
 
-if (!getSecretKey) {
+if (!config.get('secretKey')) {
   debug('FATAL ERROR: secretKey is not defined!');
   process.exit(1);
 }

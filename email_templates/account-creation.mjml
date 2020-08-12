@@ -1,0 +1,75 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body background-color="black">
+    <mj-spacer height="250px" />
+    <mj-wrapper padding="10px" border-radius="10px" background-color="white">
+
+      <mj-section>
+        <mj-column>
+          <mj-text align="center" font-size="30px">
+            Welcome, {{first_name}} {{last_name}}!
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <mj-section padding="0px">
+        <mj-column>
+          <mj-divider border-width="1px" />
+        </mj-column>
+      </mj-section>
+
+      <mj-section>
+        <mj-column>
+          <mj-text align="center" font-size="20px">
+            Your Account has been Created!
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <mj-section>
+        <mj-column>
+          <mj-text font-size="16px">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum enim eget magna efficitur, eu semper augue semper. Aliquam erat volutpat. Cras id dui lectus. Vestibulum sed finibus lectus, sit amet suscipit nibh. Proin nec commodo purus. Sed eget nulla elit. Nulla aliquet mollis faucibus.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <mj-section>
+        <mj-column>
+          <mj-button height="40px" width="400px" border-radius="35px" font-size="20px" color="black" background-color="#f50067">
+            Continue To The Homepage
+          </mj-button>
+        </mj-column>
+      </mj-section>
+
+      <mj-section>
+
+        <mj-column>
+          <mj-text align="center" font-size="16px">
+            Brownies Inc 2020 @MOD3
+          </mj-text>
+        </mj-column>
+
+        <mj-column>
+          <mj-social align="center">
+            <mj-social-element name="facebook" href="https://mjml.io/">
+              Facebook
+            </mj-social-element>
+            <mj-social-element name="google" href="https://mjml.io/">
+              Google
+            </mj-social-element>
+            <mj-social-element name="twitter" href="https://mjml.io/">
+              Twitter
+            </mj-social-element>
+          </mj-social>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-spacer height="250px" />
+
+  </mj-body>
+</mjml>

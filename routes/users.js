@@ -9,7 +9,7 @@ const auth = require('../middleware/auth.middleware');
 const bcrypt = require('bcrypt');
 const uuid = require('uuid');
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(config.get('sendgridKey'));
+sgMail.setApiKey(config.get('sendGridKey'));
 
 const router = express.Router();
 
