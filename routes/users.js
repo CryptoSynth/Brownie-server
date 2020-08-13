@@ -89,7 +89,7 @@ router.post('/', async (req, res) => {
     from: 'mackenzie.rowe@ethereal.email',
     templateId: 'd-3860e9ecb6da4757b6b3e29c19d9c785',
     dynamicTemplateData: {
-      subject: 'Testing Brownies',
+      subject: 'Brownies Inc - Account Created!',
       first_name: user.account.firstName,
       last_name: user.account.lastName
     }

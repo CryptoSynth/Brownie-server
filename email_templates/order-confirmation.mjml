@@ -1,0 +1,113 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body width="700px" background-color="black">
+    <mj-spacer height="250px" />
+    <mj-wrapper padding="20px" border-radius="10px" background-color="white">
+
+      <mj-section>
+        <mj-column>
+          <mj-text align="center" font-size="30px">
+            Order # {{invoiceId}}
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <mj-section padding="0px">
+        <mj-column>
+          <mj-divider border-width="1px" />
+        </mj-column>
+      </mj-section>
+
+      <mj-section>
+        <mj-column>
+          <mj-text align="center" font-size="30px">
+            Thank you, {{first_name}} {{last_name}} for purchasing the following Items:
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <mj-section>
+        <mj-column border-radius="20px" background-color="pink">
+          <mj-table>
+            <tr style="border-bottom:1px solid black;text-align:left;padding:15px 0;">
+              <th></th>
+              <th style="padding: 0 15px;">Name</th>
+              <th style="padding: 0 0 0 15px;">Description</th>
+              <th style="padding: 0 0 0 15px;">Price</th>
+              <th style="padding: 0 0 0 15px;">Quantity</th>
+            </tr>
+            {{#each items}}
+              <tr>
+                <td style="padding: 10px 15px 0 0; border-radius: 20px">
+                  <img style="border-radius: 10px" width="90px" src="../public/assets/images/box-brownies.jpeg" />
+                </td>
+                <td style="padding: 15px 15px;">
+                  {{this.name}}
+                </td>
+                <td style="padding: 15px 15px;">
+                  {{this.description}}
+                </td>
+                <td style="padding: 15px 15px;">
+                  {{this.price}}
+                </td>
+                <td style="padding: 15px 15px;">
+                  {{this.quantity}}
+                </td>
+              </tr>
+            {{/each}}
+          </mj-table>
+        </mj-column>
+      </mj-section>
+
+      <mj-section>
+        <mj-column>
+          <mj-text align="center" font-size="20px" font-style="bold">
+            Total: {{totalPrice}}
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <mj-section>
+        <mj-column vertical-align="middle">
+          <mj-button href="#" height="35px" border-radius="20px" font-size="18px" color="white" background-color="green">
+            Continue Shopping
+          </mj-button>
+        </mj-column>
+        <mj-column vertical-align="middle">
+          <mj-button href="#" height="35px" border-radius="20px" font-size="18px" color="white" background-color="blue">
+            Tracker Order
+          </mj-button>
+        </mj-column>
+      </mj-section>
+
+      <mj-section>
+
+        <mj-column>
+          <mj-text align="center" font-size="16px">
+            Brownies Inc 2020 @MOD3
+          </mj-text>
+        </mj-column>
+
+        <mj-column>
+          <mj-social align="center">
+            <mj-social-element name="facebook" href="https://mjml.io/">
+              Facebook
+            </mj-social-element>
+            <mj-social-element name="google" href="https://mjml.io/">
+              Google
+            </mj-social-element>
+            <mj-social-element name="twitter" href="https://mjml.io/">
+              Twitter
+            </mj-social-element>
+          </mj-social>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-spacer height="250px" />
+
+  </mj-body>
+</mjml>

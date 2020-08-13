@@ -40,7 +40,7 @@
 
       <mj-section>
         <mj-column>
-          <mj-button height="40px" width="400px" border-radius="35px" font-size="20px" color="black" background-color="#f50067">
+          <mj-button href="#" height="40px" width="400px" border-radius="35px" font-size="20px" color="black" background-color="#f50067">
             Continue To The Homepage
           </mj-button>
         </mj-column>

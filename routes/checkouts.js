@@ -9,6 +9,8 @@ const {
 const config = require('config');
 const Easypost = require('@easypost/api');
 const api = new Easypost(config.get('shippingKey'));
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(config.get('sendGridKey'));
 
 const router = express.Router();
 
@@ -65,6 +67,32 @@ router.post('/', async (req, res) => {
 
     //(6) send payment Response & orderId
     res.send({ ...paymentResponse, orderId: orderInvoiceId });
+
+    //send account created Email
+    const msg = {
+      to: user.account.email,
+      from: 'mackenzie.rowe@ethereal.email',
+      templateId: 'd-a455e47e20ab4f4a8a0f8f4692c80f1e',
+      dynamicTemplateData: {
+        subject: `Brownies Inc - Order Confirmation ${order.invoiceId}`,
+        invoiceId: order.invoiceId,
+        first_name: user.account.firstName,
+        last_name: user.account.lastName,
+        items: order.items,
+        totalPrice: () => {
+          let totalPrice = 0;
+          order.items.forEach((item) => {
+            totalPrice += item.price * item.quantity;
+          });
+
+          return totalPrice;
+        }
+      }
+    };
+
+    console.log(msg.totalPrice);
+
+    sgMail.send(msg);
   } catch (err) {
     console.log(err);
     res.status(400).send(err);
